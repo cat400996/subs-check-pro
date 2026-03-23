@@ -28,7 +28,7 @@ const (
 const (
 	notifyTimeout = 10 * time.Second // 通知请求超时时间
 
-	FallbackProxy = "socks5://test:test@51.75.126.18:1080"                                                         // 兜底代理
+	FallbackProxy = ""                                                                                             // 兜底代理
 	RepoURL       = "https://github.com/sinspired/subs-check-pro"                                                  // 仓库地址
 	IconURL       = "https://raw.githubusercontent.com/sinspired/subs-check-pro/main/app/static/icon/icon-512.png" // 通用图标 URL
 )
@@ -98,7 +98,7 @@ func Notify(req NotifyRequest, proxy string) error {
 
 // sendWithRetry 带重试逻辑的通知发送
 func sendWithRetry(req NotifyRequest, name string) {
-	proxies := []string{""} // 直连优先
+	proxies := []string{"", ""} // 直连优先尝试 2 次
 
 	if IsSysProxyAvailable {
 		proxies = append(proxies, config.GlobalConfig.SystemProxy)
@@ -266,7 +266,7 @@ func GetCurrentTime() string {
 }
 
 // SendNotifyCheckResult 发送节点检查结果通知
-func SendNotifyCheckResult(length int,checkTraffic string) {
+func SendNotifyCheckResult(length int, checkTraffic string) {
 	title := config.GlobalConfig.NotifyTitle
 	body := fmt.Sprintf("✅ 可用节点：%d\n📊 消耗流量：%s\n🕒 %s", length, checkTraffic, GetCurrentTime())
 	broadcastNotify(NotifyNodeStatus, title, body, "")
